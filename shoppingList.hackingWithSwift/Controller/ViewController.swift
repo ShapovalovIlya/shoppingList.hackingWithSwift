@@ -12,7 +12,7 @@ class ViewController: UIViewController, UITableViewDelegate {
     let navigationBar = UINavigationBar()
     let tableView = UITableView()
     
-    let shoppingListModel = ShoppingListModel()
+    var shoppingListModel = ShoppingListModel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,13 +40,34 @@ class ViewController: UIViewController, UITableViewDelegate {
         autolayoutTableView()
     }
     
-    
+    //MARK: - addShoppingItem(), submit(_:)
     @objc func addShoppingItem() {
+        let alertController = UIAlertController(title: "Enter product", message: nil, preferredStyle: .alert)
+        alertController.addTextField()
         
+        let submitAction = UIAlertAction(title: "Submit", style: .default){ [weak self, weak alertController] _ in
+            guard let product = alertController?.textFields?[0].text else { return }
+            self?.submit(product)
+        }
+        
+        alertController.addAction(submitAction)
+        present(alertController, animated: true)
     }
     
+    func submit(_ product: String) {
+        shoppingListModel.submitProduct(product)
+        let indexPath = IndexPath(row: 0, section: 0)
+        tableView.insertRows(at: [indexPath], with: .automatic)
+        return
+    }
+    
+    //MARK: - shareList()
     @objc func shareList() {
-        
+        let shoppingList = shoppingListModel.getList()
+        let activityViewcontroller = UIActivityViewController(activityItems: [shoppingList], applicationActivities: [])
+        activityViewcontroller.isModalInPresentation = true
+        activityViewcontroller.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        present(activityViewcontroller, animated: true)
     }
     
     //MARK: - Autolayout for navigation bar

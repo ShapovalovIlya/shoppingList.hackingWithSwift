@@ -14,5 +14,12 @@ struct ShoppingListModel {
         "Icecream",
         "eggs"
     ]
-        
+    
+    mutating func submitProduct(_ product: String) {
+        shoppingList.insert(product, at: 0)
+    }
+    
+    func getList() -> String {
+        shoppingList.joined(separator: "\n")
+    }
 }
